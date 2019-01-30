@@ -8,7 +8,8 @@
 
 call plug#begin()
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
-Plug 'fatih/molokai'
+"Plug 'fatih/molokai'
+Plug 'nanotech/jellybeans'
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'itchyny/lightline.vim'
 Plug 'Chiel92/vim-autoformat'
@@ -20,6 +21,9 @@ Plug 'roxma/vim-hug-neovim-rpc'
 Plug 'universal-ctags/ctags'
 Plug 'majutsushi/tagbar'
 Plug 'w0rp/ale'
+Plug 'mxw/vim-jsx'
+Plug 'alvan/vim-closetag'
+Plug 'prettier/vim-prettier', { 'do': 'yarn install' }
 call plug#end()
 
 """"""""""""""""""""""
@@ -79,11 +83,55 @@ if has('persistent_undo')
 endif
 
 " Colorscheme
-syntax enable
-set t_Co=256
-let g:rehash256 = 1
-let g:molokai_original = 1
-colorscheme molokai
+"syntax enable
+"set t_Co=256
+"let g:rehash256 = 1
+"let g:molokai_original = 1
+"colorscheme molokai
+let g:jellybeans_overrides = {
+\    'Todo': { 'guifg': '303030', 'guibg': 'f0f000',
+\              'ctermfg': 'Black', 'ctermbg': 'Yellow',
+\              'attr': 'bold' },
+\    'Comment': { 'guifg': 'cccccc' },
+\}
+
+
+" vim-closetag
+""""""""""""""""""
+" filenames like *.xml, *.html, *.xhtml, ...
+" These are the file extensions where this plugin is enabled.
+"
+let g:closetag_filenames = '*.html,*.xhtml,*.phtml,*.js,*gohtml'
+
+" filenames like *.xml, *.xhtml, ...
+" This will make the list of non-closing tags self-closing in the specified files.
+"
+let g:closetag_xhtml_filenames = '*.xhtml,*.jsx'
+
+" filetypes like xml, html, xhtml, ...
+" These are the file types where this plugin is enabled.
+"
+let g:closetag_filetypes = 'html,xhtml,phtml'
+
+" filetypes like xml, xhtml, ...
+" This will make the list of non-closing tags self-closing in the specified files.
+"
+let g:closetag_xhtml_filetypes = 'xhtml,jsx'
+
+" integer value [0|1]
+" This will make the list of non-closing tags case-sensitive (e.g. `<Link>` will be closed while `<link>` won't.)
+"
+let g:closetag_emptyTags_caseSensitive = 1
+
+" Shortcut for closing tags, default is '>'
+"
+let g:closetag_shortcut = '>'
+
+" Add > at current position without closing the current tag, default is ''
+"
+let g:closetag_close_shortcut = '<leader>>'
+
+
 
 """"""""""""""""""""""
 "      Mappings      "
@@ -187,6 +235,5 @@ function! s:build_go_files()
     call go#cmd#Build(0)
   endif
 endfunction
-
 
 
