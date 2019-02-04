@@ -8,8 +8,8 @@
 
 call plug#begin()
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
-"Plug 'fatih/molokai'
-Plug 'nanotech/jellybeans'
+Plug 'fatih/molokai'
+"Plug 'nanotech/jellybeans'
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'itchyny/lightline.vim'
 Plug 'Chiel92/vim-autoformat'
@@ -24,6 +24,10 @@ Plug 'w0rp/ale'
 Plug 'mxw/vim-jsx'
 Plug 'alvan/vim-closetag'
 Plug 'prettier/vim-prettier', { 'do': 'yarn install' }
+Plug 'SirVer/ultisnips'
+Plug 'honza/vim-snippets'
+Plug 'epilande/vim-es2015-snippets'
+Plug 'epilande/vim-react-snippets'
 call plug#end()
 
 """"""""""""""""""""""
@@ -61,6 +65,14 @@ set pumheight=10                " Completion window max size
 set nocursorcolumn              " Do not highlight column (speeds up highlighting)
 set nocursorline                " Do not highlight cursor (speeds up highlighting)
 set lazyredraw                  " Wait to redraw
+set cursorline
+
+" Change cursor shape between insert and normal mode in iTerm2.app
+if $TERM_PROGRAM =~ "iTerm"
+    let &t_SI = "\<Esc>]50;CursorShape=1\x7" " Vertical bar in insert mode
+    let &t_EI = "\<Esc>]50;CursorShape=0\x7" " Block in normal mode
+endif
+
 
 " Set this. Airline will handle the rest.
 let g:airline#extensions#ale#enabled = 1
@@ -83,18 +95,21 @@ if has('persistent_undo')
 endif
 
 " Colorscheme
-"syntax enable
-"set t_Co=256
-"let g:rehash256 = 1
-"let g:molokai_original = 1
-"colorscheme molokai
-let g:jellybeans_overrides = {
-\    'Todo': { 'guifg': '303030', 'guibg': 'f0f000',
-\              'ctermfg': 'Black', 'ctermbg': 'Yellow',
-\              'attr': 'bold' },
-\    'Comment': { 'guifg': 'cccccc' },
-\}
+syntax enable
+set t_Co=256
+let g:rehash256 = 1
+let g:molokai_original = 1
+colorscheme molokai
+"let g:jellybeans_overrides = {
+"\    'Todo': { 'guifg': '303030', 'guibg': 'f0f000',
+"\              'ctermfg': 'Black', 'ctermbg': 'Yellow',
+"\              'attr': 'bold' },
+"\    'Comment': { 'guifg': 'cccccc' },
+"\}
 
+let g:UltiSnipsExpandTrigger="<tab>"
+let g:UltiSnipsJumpForwardTrigger="<c-b>"
+let g:UltiSnipsJumpBackwardTrigger="<c-z>"
 
 " vim-closetag
 """"""""""""""""""
@@ -159,15 +174,17 @@ nnoremap N Nzzzv
 " Act like D and C
 nnoremap Y y$
 
+"make jj do esc"
+inoremap jj <Esc>
+
 " Enter automatically into the files directory
 autocmd BufEnter * silent! lcd %:p:h
+
 
 
 """""""""""""""""""""
 "      Plugins      "
 """""""""""""""""""""
-
-
 " vim-go
 let g:go_fmt_command = "goimports"
 let g:go_autodetect_gopath = 1
