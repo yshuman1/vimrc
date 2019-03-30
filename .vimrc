@@ -10,6 +10,8 @@ call plug#begin()
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 Plug 'fatih/molokai'
 "Plug 'nanotech/jellybeans'
+Plug 'dart-lang/dart-vim-plugin'
+Plug 'godoctor/godoctor.vim'
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'itchyny/lightline.vim'
 Plug 'Chiel92/vim-autoformat'
@@ -67,12 +69,20 @@ set nocursorline                " Do not highlight cursor (speeds up highlightin
 set lazyredraw                  " Wait to redraw
 set cursorline
 
+" format json
+com! FormatJSON %!python -m json.tool
+
 " Change cursor shape between insert and normal mode in iTerm2.app
 if $TERM_PROGRAM =~ "iTerm"
     let &t_SI = "\<Esc>]50;CursorShape=1\x7" " Vertical bar in insert mode
     let &t_EI = "\<Esc>]50;CursorShape=0\x7" " Block in normal mode
 endif
 
+"dart 
+let dart_html_in_string=v:true
+let dart_corelib_highlight=v:false
+let dart_style_guide = 2
+let dart_format_on_save = 1
 
 " Set this. Airline will handle the rest.
 let g:airline#extensions#ale#enabled = 1
