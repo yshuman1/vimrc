@@ -9,7 +9,7 @@
 call plug#begin()
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 Plug 'fatih/molokai'
-"Plug 'nanotech/jellybeans'
+Plug 'hankchiutw/flutter-reload.vim'
 Plug 'dart-lang/dart-vim-plugin'
 Plug 'godoctor/godoctor.vim'
 Plug 'ctrlpvim/ctrlp.vim'
@@ -22,19 +22,44 @@ Plug 'roxma/nvim-yarp'
 Plug 'roxma/vim-hug-neovim-rpc'
 Plug 'universal-ctags/ctags'
 Plug 'majutsushi/tagbar'
-Plug 'w0rp/ale'
+"Plug 'w0rp/ale'
 Plug 'mxw/vim-jsx'
 Plug 'alvan/vim-closetag'
-Plug 'prettier/vim-prettier', { 'do': 'yarn install' }
+Plug 'prettier/vim-prettier', {
+  \ 'do': 'yarn install',
+  \ 'for': ['javascript', 'typescript', 'css', 'less', 'scss', 'json', 'graphql', 'markdown', 'vue', 'yaml', 'html', 'dart'] }
 Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
 Plug 'epilande/vim-es2015-snippets'
 Plug 'epilande/vim-react-snippets'
+
+
+" Add maktaba and codefmt to the runtimepath.
+" (The latter must be installed before it can be used.)
+Plug 'google/vim-maktaba'
+Plug 'google/vim-codefmt'
+" Also add Glaive, which is used to configure codefmt's maktaba flags. See
+" `:help :Glaive` for usage.
 call plug#end()
+
+
+augroup autoformat_settings
+  autocmd FileType bzl AutoFormatBuffer buildifier
+  autocmd FileType c,cpp,proto,javascript AutoFormatBuffer clang-format
+  autocmd FileType dart AutoFormatBuffer dartfmt
+  autocmd FileType go AutoFormatBuffer gofmt
+  autocmd FileType gn AutoFormatBuffer gn
+  autocmd FileType html,css,sass,scss,less,json AutoFormatBuffer js-beautify
+  autocmd FileType java AutoFormatBuffer google-java-format
+  autocmd FileType python AutoFormatBuffer yapf
+  " Alternative: autocmd FileType python AutoFormatBuffer autopep8
+augroup END
+
 
 """"""""""""""""""""""
 "      Settings      "
 """"""""""""""""""""""
+set textwidth=80
 set nocompatible                " Enables us Vim specific features
 filetype off                    " Reset filetype detection first ...
 filetype plugin indent on       " ... and enable filetype detection
@@ -68,7 +93,7 @@ set nocursorcolumn              " Do not highlight column (speeds up highlightin
 set nocursorline                " Do not highlight cursor (speeds up highlighting)
 set lazyredraw                  " Wait to redraw
 set cursorline
-
+set mouse=a
 " format json
 com! FormatJSON %!python -m json.tool
 
@@ -163,6 +188,7 @@ let g:closetag_close_shortcut = '<leader>>'
 """"""""""""""""""""""
 " Set leader shortcut to a comma ','. By default it's the backslash
 let mapleader = ","
+
 
 " Jump to next error with Ctrl-n and previous error with Ctrl-m. Close the
 " quickfix window with <leader>a
