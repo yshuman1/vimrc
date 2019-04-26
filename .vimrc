@@ -7,6 +7,7 @@
 " throughout years. Keep it clean and useful - Fatih Arslan
 
 call plug#begin()
+Plug 'vimwiki/vimwiki', { 'branch': 'dev' }
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 Plug 'fatih/molokai'
 Plug 'hankchiutw/flutter-reload.vim'
@@ -17,12 +18,8 @@ Plug 'itchyny/lightline.vim'
 Plug 'Chiel92/vim-autoformat'
 Plug 'kana/vim-smartinput'
 Plug 'scrooloose/nerdtree'
-Plug 'Shougo/deoplete.nvim'
-Plug 'roxma/nvim-yarp'
-Plug 'roxma/vim-hug-neovim-rpc'
 Plug 'universal-ctags/ctags'
-Plug 'majutsushi/tagbar'
-"Plug 'w0rp/ale'
+Plug 'tpope/vim-fugitive'
 Plug 'mxw/vim-jsx'
 Plug 'alvan/vim-closetag'
 Plug 'prettier/vim-prettier', {
@@ -30,30 +27,23 @@ Plug 'prettier/vim-prettier', {
   \ 'for': ['javascript', 'typescript', 'css', 'less', 'scss', 'json', 'graphql', 'markdown', 'vue', 'yaml', 'html', 'dart'] }
 Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
+Plug 'natebosch/dartlang-snippets'
 Plug 'epilande/vim-es2015-snippets'
 Plug 'epilande/vim-react-snippets'
+Plug 'natebosch/vim-lsc'
+if has('nvim')
+  Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+else
+Plug 'Shougo/deoplete.nvim'
+Plug 'roxma/vim-hug-neovim-rpc'
+Plug 'roxma/nvim-yarp'
+endif
 
 
-" Add maktaba and codefmt to the runtimepath.
-" (The latter must be installed before it can be used.)
-Plug 'google/vim-maktaba'
-Plug 'google/vim-codefmt'
-" Also add Glaive, which is used to configure codefmt's maktaba flags. See
-" `:help :Glaive` for usage.
 call plug#end()
+let g:deoplete#enable_at_startup = 1
+let g:lsc_server_commands = {'dart': 'dart_language_server'}
 
-
-augroup autoformat_settings
-  autocmd FileType bzl AutoFormatBuffer buildifier
-  autocmd FileType c,cpp,proto,javascript AutoFormatBuffer clang-format
-  autocmd FileType dart AutoFormatBuffer dartfmt
-  autocmd FileType go AutoFormatBuffer gofmt
-  autocmd FileType gn AutoFormatBuffer gn
-  autocmd FileType html,css,sass,scss,less,json AutoFormatBuffer js-beautify
-  autocmd FileType java AutoFormatBuffer google-java-format
-  autocmd FileType python AutoFormatBuffer yapf
-  " Alternative: autocmd FileType python AutoFormatBuffer autopep8
-augroup END
 
 
 """"""""""""""""""""""
@@ -63,9 +53,11 @@ set textwidth=80
 set nocompatible                " Enables us Vim specific features
 filetype off                    " Reset filetype detection first ...
 filetype plugin indent on       " ... and enable filetype detection
-set ttyfast                     " Indicate fast terminal conn for faster redraw
-set ttymouse=xterm2             " Indicate terminal type for mouse codes
+set ttyfast  " Indicate fast terminal conn for faster redraw
+if !has('nvim')
+set ttymouse=xterm2 " Indicate terminal type for mouse codes
 set ttyscroll=3                 " Speedup scrolling
+endif
 set laststatus=2                " Show status line always
 set encoding=utf-8              " Set default encoding to UTF-8
 set autoread                    " Automatically read changed files
@@ -94,6 +86,10 @@ set nocursorline                " Do not highlight cursor (speeds up highlightin
 set lazyredraw                  " Wait to redraw
 set cursorline
 set mouse=a
+
+vmap <C-c> y:call system("pbcopy", getreg("\""))<CR>
+nmap <C-v> :call setreg("\"",system("pbpaste"))<CR>p
+
 " format json
 com! FormatJSON %!python -m json.tool
 
@@ -135,16 +131,11 @@ set t_Co=256
 let g:rehash256 = 1
 let g:molokai_original = 1
 colorscheme molokai
-"let g:jellybeans_overrides = {
-"\    'Todo': { 'guifg': '303030', 'guibg': 'f0f000',
-"\              'ctermfg': 'Black', 'ctermbg': 'Yellow',
-"\              'attr': 'bold' },
-"\    'Comment': { 'guifg': 'cccccc' },
-"\}
-
+" Ultisnips
 let g:UltiSnipsExpandTrigger="<tab>"
 let g:UltiSnipsJumpForwardTrigger="<c-b>"
 let g:UltiSnipsJumpBackwardTrigger="<c-z>"
+let g:UltiSnipsSnippetDirectories=[$HOME.'/.vim/UltiSnips'] 
 
 " vim-closetag
 """"""""""""""""""
@@ -189,7 +180,6 @@ let g:closetag_close_shortcut = '<leader>>'
 " Set leader shortcut to a comma ','. By default it's the backslash
 let mapleader = ","
 
-
 " Jump to next error with Ctrl-n and previous error with Ctrl-m. Close the
 " quickfix window with <leader>a
 map <C-n> :cnext<CR>
@@ -216,8 +206,11 @@ inoremap jj <Esc>
 " Enter automatically into the files directory
 autocmd BufEnter * silent! lcd %:p:h
 
+" delete all commented lines
+nnoremap <leader>c :%s/\/\/.*$\n//g<CR>:w<CR>
 
-
+" delete all lines
+nnoremap <leader>d :1,$d<CR>:w<CR>
 """""""""""""""""""""
 "      Plugins      "
 """""""""""""""""""""
@@ -237,6 +230,13 @@ let g:go_highlight_generate_tags = 1
 nmap <C-g> :GoDeclsDir<cr>
 imap <C-g> <esc>:<C-u>GoDeclsDir<cr>
 
+"nerdtree
+" autocmd VimEnter * NERDTree
+let g:NERDTreeWinSize=30
+nnoremap <expr> <leader>m  g:NERDTree.IsOpen() ? "\:NERDTreeClose<CR>" : bufexists(expand('%')) ? "\:NERDTreeFind<CR>" : "\:NERDTree<CR>"
+let NERDTreeQuitOnOpen = 1
+let NERDTreeMinimalUI = 1
+let NERDTreeDirArrows = 1
 
 augroup go
   autocmd!
