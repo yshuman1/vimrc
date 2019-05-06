@@ -7,6 +7,7 @@
 " throughout years. Keep it clean and useful - Fatih Arslan
 
 call plug#begin()
+Plug 'pangloss/vim-javascript'
 Plug 'vimwiki/vimwiki', { 'branch': 'dev' }
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 Plug 'fatih/molokai'
@@ -93,6 +94,10 @@ nmap <C-v> :call setreg("\"",system("pbpaste"))<CR>p
 " format json
 com! FormatJSON %!python -m json.tool
 
+
+let g:prettier#autoformat = 0
+autocmd BufWritePre *.js,*.jsx,*.mjs,*.ts,*.tsx,*.css,*.less,*.scss,*.json,*.graphql,*.md,*.vue,*.yaml,*.html PrettierAsync
+
 " Change cursor shape between insert and normal mode in iTerm2.app
 if $TERM_PROGRAM =~ "iTerm"
     let &t_SI = "\<Esc>]50;CursorShape=1\x7" " Vertical bar in insert mode
@@ -106,7 +111,7 @@ let dart_style_guide = 2
 let dart_format_on_save = 1
 
 " Set this. Airline will handle the rest.
-let g:airline#extensions#ale#enabled = 1
+"let g:airline#extensions#ale#enabled = 1
 
 " enable deoplete at startup
 let g:deoplete#enable_at_startup = 1
